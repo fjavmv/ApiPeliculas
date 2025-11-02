@@ -8,11 +8,13 @@ namespace ApiPeliculas.Controllers
 {
     [Route("api/[controller]")] //Opcion estatica
     [ApiController] //Opcion dinamica
-    public class CategoriasController : ControllerBase
+    public class CategorysController : ControllerBase
     {
         private readonly ICategoryRepository _catRepo;
         private readonly IMapper _mapper;
-        public CategoriasController(ICategoryRepository _ctRepo, IMapper  mapper)
+
+        //Inyeccion de dependencias
+        public CategorysController(ICategoryRepository _ctRepo, IMapper  mapper)
         {
             _catRepo = _ctRepo;
             _mapper = mapper;
@@ -20,16 +22,19 @@ namespace ApiPeliculas.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetCategorys()
         {
-            var listaCategorias = _catRepo.GetCategorys();
-            var listaCategoriasDto = new List<CategoryDto>();
+            var listCategorys = _catRepo.GetCategorys();
+            var listCategorysDto = new List<CategoryDto>();
 
-            foreach (var lista in listaCategorias)
+            foreach (var list in listCategorys)
             {
-                listaCategoriasDto.Add(_mapper.Map<CategoryDto>(lista));
+                listCategorysDto.Add(_mapper.Map<CategoryDto>(list));
             }
-            return Ok(listaCategoriasDto);
+            return Ok(listCategorysDto);
         }
         
     }

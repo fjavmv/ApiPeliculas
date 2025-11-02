@@ -1,9 +1,10 @@
 
 using ApiPeliculas.Data;
-using ApiPeliculas.PeliculasMapper;
+using ApiPeliculas.Mappers;
 using ApiPeliculas.Repository;
 using ApiPeliculas.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace ApiPeliculas
 {
@@ -15,7 +16,13 @@ namespace ApiPeliculas
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
-            opciones.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                             opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //Agregamos los Repositorios
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            //Agregar el AutoMapper ya cambio en su version 15
+            builder.Services.AddAutoMapper(typeof(PeliculasMapper));
 
 
 
@@ -23,8 +30,6 @@ namespace ApiPeliculas
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<ICategoryRepository, CategoyRepository>();
-            builder.Services.AddAutoMapper(typeof(PeliculaMapper));
 
             var app = builder.Build();
 

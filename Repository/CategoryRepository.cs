@@ -4,16 +4,20 @@ using ApiPeliculas.Repository.IRepository;
 
 namespace ApiPeliculas.Repository
 {
-    public class CategoyRepository : ICategoryRepository
+    //Servicio que implementa la interfaz ICategoryRepository para utilizar los metodos definidos
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly ApplicationDbContext _db;
-        public CategoyRepository(ApplicationDbContext db)
+
+        public CategoryRepository(ApplicationDbContext db)
         {
             _db = db;
         }
-        public bool CreateCategory(Categoria categoria)
+
+        public bool UpdateCategory(Categoria categoria)
         {
-            _db.Categoria.Add(categoria);
+            categoria.CretioDate = DateTime.Now;
+            _db.Categoria.Update(categoria);
             return SaveCategory();
         }
 
@@ -24,7 +28,15 @@ namespace ApiPeliculas.Repository
 
         }
 
-        public bool ExistsCategory(int CategoriaId)
+        public bool CreateCategory(Categoria categoria)
+        {
+            categoria.Id = Guid.NewGuid();
+            categoria.CretioDate = DateTime.Now;
+            _db.Categoria.Add(categoria);
+            return SaveCategory();
+        }
+
+        public bool ExistsCategory(Guid CategoriaId)
         {
             return _db.Categoria.Any(c => c.Id == CategoriaId);
         }
@@ -35,7 +47,7 @@ namespace ApiPeliculas.Repository
             return valor;
         }
 
-        public Categoria GetCategory(int CategoriaId)
+        public Categoria GetCategory(Guid CategoriaId)
         {
             return _db.Categoria.FirstOrDefault(c => c.Id == CategoriaId);
         }
@@ -47,14 +59,10 @@ namespace ApiPeliculas.Repository
 
         public bool SaveCategory()
         {
-            return _db.SaveChanges() >= 0 ? true: false;
+            return _db.SaveChanges() >= 0 ? true : false;
         }
 
-        public bool UpdateCategory(Categoria categoria)
-        {
-            categoria.FechaDeCreacion = DateTime.Now;
-            _db.Categoria.Update(categoria);
-            return SaveCategory();
-        }
+
     }
 }
+

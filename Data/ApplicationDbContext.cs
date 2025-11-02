@@ -11,7 +11,7 @@ namespace ApiPeliculas.Data
             
         }
 
-        //Aqui se colocan todas los modelos (entidades)
+        //Aqui se colocan todos los modelos (entidades) para tener acceso
         public DbSet<Categoria> Categoria { get; set; }
     }
 }
