@@ -1,6 +1,7 @@
 ﻿using ApiPeliculas.Data;
 using ApiPeliculas.Models;
 using ApiPeliculas.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiPeliculas.Repository
 {
@@ -14,47 +15,59 @@ namespace ApiPeliculas.Repository
             _db = db;
         }
 
-        public bool UpdateCategory(Categoria categoria)
+        public bool UpdateCategory(Category category)
         {
-            categoria.CretioDate = DateTime.Now;
-            _db.Categoria.Update(categoria);
+            category.LastUpdate = DateTime.Now;
+            _db.Category.Update(category);
             return SaveCategory();
         }
 
-        public bool DeleteCategory(Categoria Categoria)
+        public bool DeleteCategory(Category category)
         {
-            _db.Categoria.Remove(Categoria);
+            try
+            {
+                category.IsActive = false;
+                category.LastUpdate = DateTime.Now;
+                _db.Category.Update(category);
+                //_db.SaveChanges();
+               // return true;
+            }
+            catch
+            {
+                return false;
+            }
+            //_db.Categoria.Remove(Categoria);
             return SaveCategory();
 
         }
 
-        public bool CreateCategory(Categoria categoria)
+        public bool CreateCategory(Category categoria)
         {
             categoria.Id = Guid.NewGuid();
-            categoria.CretioDate = DateTime.Now;
-            _db.Categoria.Add(categoria);
+            categoria.CreationDate = DateTime.Now;
+            _db.Category.Add(categoria);
             return SaveCategory();
         }
 
         public bool ExistsCategory(Guid CategoriaId)
         {
-            return _db.Categoria.Any(c => c.Id == CategoriaId);
+            return _db.Category.Any(c => c.Id == CategoriaId);
         }
 
         public bool ExistsCategory(string nombre)
         {
-            bool valor = _db.Categoria.Any(c => c.Name.ToLower().Trim() == nombre.ToLower().Trim());
+            bool valor = _db.Category.Any(c => c.Name.ToLower().Trim() == nombre.ToLower().Trim());
             return valor;
         }
 
-        public Categoria GetCategory(Guid CategoriaId)
+        public Category GetCategory(Guid CategoriaId)
         {
-            return _db.Categoria.FirstOrDefault(c => c.Id == CategoriaId);
+            return _db.Category.FirstOrDefault(c => c.Id == CategoriaId);
         }
 
-        public ICollection<Categoria> GetCategorys()
+        public ICollection<Category> GetCategories()
         {
-            return _db.Categoria.OrderBy(c => c.Name).ToList();
+            return _db.Category.OrderBy(c => c.Name).ToList();
         }
 
         public bool SaveCategory()
