@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ApiImages.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ApiPeliculas.Models
+namespace ApiImages.Models
 {
     public class Category
     {
@@ -21,6 +22,9 @@ namespace ApiPeliculas.Models
         public DateTime CreationDate { get; set; }
         
         public DateTime? LastUpdate { get; set; }
+
+        // Relación muchos a muchos
+        public ICollection<Image> Images { get; set; } = new List<Image>();
 
     }
 }

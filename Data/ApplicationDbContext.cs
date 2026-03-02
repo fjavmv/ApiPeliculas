@@ -1,8 +1,8 @@
-﻿using ApiPeliculas.Models;
+﻿using ApiImages.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiPeliculas.Data
+namespace ApiImages.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -13,6 +13,7 @@ namespace ApiPeliculas.Data
 
         //Aqui se colocan todos los modelos (entidades) para tener acceso
         public DbSet<Category> Category { get; set; }
+        public DbSet<Image> Image { get; set; }
 
         /* 
         - automáticamente se aplicará el filtro WHERE IsActive = 1.
@@ -26,7 +27,10 @@ namespace ApiPeliculas.Data
 
             // Filtro global
             modelBuilder.Entity<Category>().HasQueryFilter(c => c.IsActive);
+            modelBuilder.Entity<Image>().HasAlternateKey(i => i.IsActive);
         }
+
+
 
     }
 }

@@ -1,9 +1,9 @@
-﻿using ApiPeliculas.Data;
-using ApiPeliculas.Models;
-using ApiPeliculas.Repository.IRepository;
+﻿using ApiImages.Data;
+using ApiImages.Models;
+using ApiImages.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiPeliculas.Repository
+namespace ApiImages.Repository
 {
     //Servicio que implementa la interfaz ICategoryRepository para utilizar los metodos definidos
     public class CategoryRepository : ICategoryRepository
@@ -15,67 +15,58 @@ namespace ApiPeliculas.Repository
             _db = db;
         }
 
-        public bool UpdateCategory(Category category)
+        public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
-            category.LastUpdate = DateTime.Now;
+            return await _db.Category
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
+
+        public async Task<Category?> GetCategoryAsync(Guid idCategory)
+        {
+            return await _db.Category
+                .FirstOrDefaultAsync(c => c.Id == idCategory);
+        }
+
+        public async Task<bool> ExistsCategoryAsync(Guid idCategory)
+        {
+            return await _db.Category.AnyAsync(c => c.Id == idCategory);
+        }
+
+        public async Task<bool> ExistsCategoryAsync(string name)
+        {
+            return await _db.Category
+                .AnyAsync(c => c.Name.ToLower().Trim() == name.ToLower().Trim());
+        }
+
+        public async Task AddCategoryAsync(Category category)
+        {
+            category.Id = Guid.NewGuid();
+            category.CreationDate = DateTime.UtcNow;
+
+            await _db.Category.AddAsync(category);
+        }
+
+        public Task UpdateCategoryAsync(Category category)
+        {
+            category.LastUpdate = DateTime.UtcNow;
             _db.Category.Update(category);
-            return SaveCategory();
+            return Task.CompletedTask;
         }
 
-        public bool DeleteCategory(Category category)
+        public Task DeleteCategoryAsync(Category category)
         {
-            try
-            {
-                category.IsActive = false;
-                category.LastUpdate = DateTime.Now;
-                _db.Category.Update(category);
-                //_db.SaveChanges();
-               // return true;
-            }
-            catch
-            {
-                return false;
-            }
-            //_db.Categoria.Remove(Categoria);
-            return SaveCategory();
-
+            category.IsActive = false;
+            category.LastUpdate = DateTime.UtcNow;
+            _db.Category.Update(category);
+            return Task.CompletedTask;
         }
 
-        public bool CreateCategory(Category categoria)
+        public async Task<bool> SaveChangesAsync()
         {
-            categoria.Id = Guid.NewGuid();
-            categoria.CreationDate = DateTime.Now;
-            _db.Category.Add(categoria);
-            return SaveCategory();
+            return await _db.SaveChangesAsync() > 0;
         }
-
-        public bool ExistsCategory(Guid CategoriaId)
-        {
-            return _db.Category.Any(c => c.Id == CategoriaId);
-        }
-
-        public bool ExistsCategory(string nombre)
-        {
-            bool valor = _db.Category.Any(c => c.Name.ToLower().Trim() == nombre.ToLower().Trim());
-            return valor;
-        }
-
-        public Category GetCategory(Guid CategoriaId)
-        {
-            return _db.Category.FirstOrDefault(c => c.Id == CategoriaId);
-        }
-
-        public ICollection<Category> GetCategories()
-        {
-            return _db.Category.OrderBy(c => c.Name).ToList();
-        }
-
-        public bool SaveCategory()
-        {
-            return _db.SaveChanges() >= 0 ? true : false;
-        }
-
-
     }
+
 }
 

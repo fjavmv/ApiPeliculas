@@ -1,17 +1,16 @@
-﻿using ApiPeliculas.Models;
+﻿using ApiImages.Models;
 
-namespace ApiPeliculas.Repository.IRepository
+namespace ApiImages.Repository.IRepository
 {
     public interface ICategoryRepository
     {
-        ICollection<Category> GetCategories();
-        Category GetCategory(Guid CategoriaId);
-        bool ExistsCategory(Guid CategoriaId);
-        bool ExistsCategory(string nombre);
-        bool CreateCategory(Category categoria);
-        bool UpdateCategory(Category categoria);
-        bool DeleteCategory(Category categoria);
-        bool SaveCategory();
-
+        Task<IEnumerable<Category>> GetCategoriesAsync();
+        Task<Category?> GetCategoryAsync(Guid idCategory);
+        Task<bool> ExistsCategoryAsync(Guid idCategory);
+        Task<bool> ExistsCategoryAsync(string name);
+        Task AddCategoryAsync(Category category);
+        Task UpdateCategoryAsync(Category category);
+        Task DeleteCategoryAsync(Category category);
+        Task<bool> SaveChangesAsync();
     }
 }
